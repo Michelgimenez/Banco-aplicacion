@@ -4,7 +4,6 @@
 const account1 = {
   owner: 'Nicolas Krain',
   movements: [200, 455.23, -306.5, 25000, -642.21, -133.9, 79.97, 1300],
-  interestRate: 1.2, // %
   pin: 1111,
 
   movementsDates: [
@@ -24,7 +23,6 @@ const account1 = {
 const account2 = {
   owner: 'Amanda Luna',
   movements: [5000, 3400, -150, -790, -3210, -1000, 8500, -30],
-  interestRate: 1.5,
   pin: 2222,
 
   movementsDates: [
@@ -44,7 +42,6 @@ const account2 = {
 const account3 = {
   owner: 'Michel Gimenez',
   movements: [200, 455.23, -306.5, 25000, -642.21, -133.9, 79.97, 1300],
-  interestRate: 1.2, // %
   pin: 3333,
 
   movementsDates: [
@@ -70,7 +67,6 @@ const labelDate = document.querySelector('.date');
 const labelBalance = document.querySelector('.balance__value');
 const labelSumIn = document.querySelector('.summary__value--in');
 const labelSumOut = document.querySelector('.summary__value--out');
-const labelSumInterest = document.querySelector('.summary__value--interest');
 const labelTimer = document.querySelector('.timer');
 
 const containerApp = document.querySelector('.app');
@@ -197,19 +193,6 @@ const calcDisplaySummary = function (acc) {
     style: 'currency',
     currency: acc.currency,
   });
-
-  const interest = acc.movements
-    .filter(mov => mov > 0)
-    .map(deposit => (deposit * acc.interestRate) / 100)
-    .filter((int, i, arr) => {
-      return int >= 1;
-    })
-    .reduce((acc, int) => acc + int, 0);
-
-  labelSumInterest.textContent = formatCurrencies(interest, acc.locale, {
-    style: 'currency',
-    currency: acc.currency,
-  });
 };
 
 // Este metodo que recibe las cuentas de los usuarios, procedo a loopear sobre cada cuenta, y por cada una encontrada procedo a crearle el field de USERNAME donde su valor va a ser igual a seleccionar el field de owner de la cuenta que contiene el nombre del usuario, a esto lo vuelvo minusculas, despues usoSPLIT para crear un array con el nombre y apellido separados, despues procedo a mapear sobre este array y seleciono de cada string su primer valor, esto me devuelve por ejemplo pasando de ['michel', 'gimenez'] a  ['m', 'g'] y uso JOIN para unirlo en una sola string. Quedando entonces el field de USERNAME teniendo como valor 'mg'
@@ -291,7 +274,7 @@ btnLogin.addEventListener('click', function (e) {
 
   // 3) Una vez encontrado el usuario y almaceno en la variable, procedo a verificar que si el pin de esta cuenta encontrada es igual al pin ingresado en el input, entonces procedo a colocar en el div del texto de bienvenida, un texto personalizado seleccionando el primer nombre del usuario. Y y le doy opacidad de 100 al div de la app para que se muestre el contenido. Despues procedo a crear una variable de opciones para la api de fechas internacionales de javascript. Y dentro coloco las opciones que quiero para el horario y para el dia. Y finalmente coloco un intervalo que se va a ejecutar cada 1 segundo y lo que va a hacer es colocar en el div de la fecha como contenido, un llamado a la api de fechas internacionales y le paso la localidad de la cuenta que se encuentra en la variable de currentAccount y en el field de LOCALE que por ejemplo seria es-AR, y en opciones le coloco la variable que cree. Y a este resultado le aplico el metodo de format para que se le de formato a la fecha. De esta forma cada 1 segundo se actualiza la fecha. Finalmente vacio los inputs y le quito el enfoque a ambos inputs con BLUR(), y finalmente llamo al metodo de updateUI para desplegar en el HTML toda la informacion de los movimientos de la cuenta
   if (currentAccount?.pin === +inputLoginPin.value) {
-    labelWelcome.textContent = `Welcome back, ${
+    labelWelcome.textContent = `Bienvenido, ${
       currentAccount.owner.split(' ')[0]
     }`;
 
@@ -315,8 +298,11 @@ btnLogin.addEventListener('click', function (e) {
 
     // Lo ideal es no crear la opcion del pais de forma manual, lo ideal es obtener el pais e idioma desde la informacion de la persona, esto me da por ejemplo en mi caso es-AR ya que tengo en espanol y soy de argentina
     const locale = navigator.language;
+
+    /*
     console.log(locale);
     console.log(new Intl.DateTimeFormat(locale, options).format());
+    */
 
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
